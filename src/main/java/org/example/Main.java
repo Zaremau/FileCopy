@@ -1,41 +1,45 @@
 package org.example;
 
 public class Main {
+
     public static void main(String[] args) {
-        String source_path = "C:\\Users\\zarem\\Desktop\\Spring\\FileCopy\\I think we've forgotten how to live..mp4";
-        String destination_path = "C:\\Users\\zarem\\Desktop\\Spring\\FileCopy\\I think we've forgotten how to live copy..mp4";
+        String sourcePath = ""; // например: "C:/files/source.mp4"
+        String destinationPath = ""; // например: "C:/files/copy.mp4"
+
 
         long startTime;
         long endTime;
 
-        // Замер времени выполнения копирования с буфером
+        //Замер времени выполнения копирования без буфера
         startTime = System.nanoTime();
-        FileCopy.BinaryCopyBuffered(source_path, destination_path);
-        endTime = System.nanoTime();
-
-        double durationWithBuffer = (endTime - startTime)/ 1_000_000_000.0;
-
-        System.out.printf("Время выполнения копирования с буфером: %.2f \n", durationWithBuffer);
-
-       //Замер времени выполнения копирования без буфера
-        startTime = System.nanoTime();
-        FileCopy.BinaryCopy(source_path, destination_path);
+        FileCopy.binaryCopy(sourcePath, destinationPath);
         endTime = System.nanoTime();
 
         double durationNoBuffer = (endTime - startTime)/ 1_000_000_000.0;
 
         System.out.printf("Время выполнения копирования без буфера: %.2f \n", durationNoBuffer);
 
-        /*Лог:
-            Объект успешно скопирован с использованием буфера
-            Время выполнения копирования с буфером: 0,17
-            Объект успешно скопирован без использования буфера
-            Время выполнения копирования без буфера: 956,04
+        // Замер времени выполнения копирования с буфером
+        startTime = System.nanoTime();
+        FileCopy.binaryCopyBuffered(sourcePath, destinationPath);
+        endTime = System.nanoTime();
 
-            Чтение с диска дорогостоящая операция, поэтому чем меньше программа ходит туда для чтения,
-            тем выше скорость её выплнения. Без буфера ей приходится читать файл для каждого байта,
-            что замедляет работу. С буфером программа за один раз копирует большой участок данных
-             и соответсвенно реже обращается к диску. Поэтому даёт такой большой прирост.
+        double durationWithBuffer = (endTime - startTime)/ 1_000_000_000.0;
+
+        System.out.printf("Время выполнения копирования с буфером: %.2f \n", durationWithBuffer);
+
+
+        /*Лог после копирования файла размеров в 154 мг двумя методами:
+            Файл успешно скопирован без использования буфера
+            Время выполнения копирования без буфера: 956,04
+            Файл успешно скопирован с использованием буфера
+            Время выполнения копирования с буфером: 0,17
+
+            Классы BufferedInputStream/ BufferedOutputStream позволяют копировать через буфер,
+            но для большей наглядности я использовала ещё дополнительный буфер  byte[] buffer.
+            Время копирования с буфером сократилось в 5 623,77 раз. Это объясняется тем,
+            что метод без буфера делает многократно больше системных вызовов read()/write(),
+             поэтому у него гораздо выше оверхэд.
          */
     }
 }

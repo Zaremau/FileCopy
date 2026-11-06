@@ -3,8 +3,9 @@ package org.example;
 import java.io.*;
 
 public class FileCopy {
+    private static final int BUFFER_SIZE = 64 * 1024;
 
-    public static void BinaryCopy(String sourcePath, String destinationPath){
+    public static void binaryCopy(String sourcePath, String destinationPath){
         File source = new File(sourcePath);
         File destination = new File(destinationPath);
 
@@ -17,21 +18,21 @@ public class FileCopy {
                 readData = fis.read();
             }
 
-            System.out.println("Объект успешно скопирован без использования буфера");
+            System.out.println("Файл успешно скопирован без использования буфера");
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new  RuntimeException("Ошибка копирования: " + sourcePath, e);
         }
     }
 
-    public static void BinaryCopyBuffered(String sourcePath, String destinationPath){
+    public static void binaryCopyBuffered(String sourcePath, String destinationPath){
         File source = new File(sourcePath);
         File destination = new File(destinationPath);
 
         try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(source));
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(destination))) {
 
-            byte[] buffer = new byte[1024 * 64];
+            byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead = bis.read(buffer);
 
             while(bytesRead != -1){
@@ -39,10 +40,9 @@ public class FileCopy {
                 bytesRead = bis.read(buffer);
             }
 
-            bos.flush();
-            System.out.println("Объект успешно скопирован с использованием буфера");
+            System.out.println("Файл успешно скопирован с использованием буфера");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка копирования: " + sourcePath, e);
         }
     }
 }
